@@ -7,9 +7,10 @@
 
 /* ── Report header ──────────────────────────────────────── */
 .report-header {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
   padding: 1.8rem 2rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -78,9 +79,10 @@
 
 /* ── Filter bar ─────────────────────────────────────────── */
 .filter-bar {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 22px;
+  box-shadow: var(--shadow-sm);
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -108,11 +110,11 @@
   transition: all var(--transition);
 }
 .filter-pill:hover,
-.filter-pill.active { border-color: var(--green); color: var(--green); background: rgba(0,229,160,.08); }
-.filter-pill.f-critical.active { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.08); }
-.filter-pill.f-high.active    { border-color: var(--orange); color: var(--orange); background: rgba(249,115,22,.08); }
-.filter-pill.f-medium.active  { border-color: var(--yellow); color: var(--yellow); background: rgba(245,158,11,.08); }
-.filter-pill.f-low.active     { border-color: var(--blue); color: var(--blue); background: rgba(59,130,246,.08); }
+.filter-pill.active { border-color: var(--green); color: var(--green); background: var(--accent-soft); }
+.filter-pill.f-critical.active { border-color: var(--red); color: var(--red); background: var(--red-soft); }
+.filter-pill.f-high.active    { border-color: var(--orange); color: var(--orange); background: var(--orange-soft); }
+.filter-pill.f-medium.active  { border-color: var(--yellow); color: var(--yellow); background: var(--yellow-soft); }
+.filter-pill.f-low.active     { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
 
 .search-findings {
   margin-left: auto;
@@ -121,14 +123,15 @@
 
 /* ── Finding card ─────────────────────────────────────────── */
 .finding-card {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 94%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
   overflow: hidden;
   transition: border-color var(--transition);
 }
-.finding-card:hover { border-color: rgba(0,229,160,.2); }
+.finding-card:hover { border-color: var(--border-strong); }
 
 .finding-card-header {
   padding: 1.1rem 1.5rem;
@@ -241,8 +244,8 @@
 .ev-comm  { color: var(--text-muted); }
 
 .remediation-block {
-  background: rgba(0,229,160,.05);
-  border: 1px solid rgba(0,229,160,.2);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--green) 20%, transparent);
   border-radius: var(--radius-sm);
   padding: 1rem 1.2rem;
 }
@@ -361,9 +364,9 @@
             <div class="finding-card-endpoint">POST /api/v2/users/profile</div>
             <div class="finding-card-tags">
               <span class="caw-badge badge-critical">Critical</span>
-              <span class="caw-badge" style="background:rgba(139,92,246,.2);color:#a78bfa;">CORS</span>
-              <span class="caw-badge" style="background:rgba(0,229,160,.1);color:var(--green);">API</span>
-              <span class="caw-badge" style="background:rgba(249,115,22,.1);color:var(--orange);">Auth Endpoint</span>
+              <span class="caw-badge surface-violet" style="color:var(--violet);">CORS</span>
+              <span class="caw-badge surface-accent" style="color:var(--green);">API</span>
+              <span class="caw-badge surface-orange" style="color:var(--orange);">Auth Endpoint</span>
             </div>
           </div>
         </div>
@@ -426,8 +429,8 @@
             <div class="finding-card-endpoint">GET /admin/dashboard</div>
             <div class="finding-card-tags">
               <span class="caw-badge badge-critical">Critical</span>
-              <span class="caw-badge" style="background:rgba(59,130,246,.1);color:var(--blue);">Headers</span>
-              <span class="caw-badge" style="background:rgba(249,115,22,.1);color:var(--orange);">Admin Endpoint</span>
+              <span class="caw-badge surface-blue" style="color:var(--blue);">Headers</span>
+              <span class="caw-badge surface-orange" style="color:var(--orange);">Admin Endpoint</span>
             </div>
           </div>
         </div>
@@ -472,8 +475,8 @@
             <div class="finding-card-endpoint">GET / (root domain)</div>
             <div class="finding-card-tags">
               <span class="caw-badge badge-high">High</span>
-              <span class="caw-badge" style="background:rgba(59,130,246,.1);color:var(--blue);">Headers</span>
-              <span class="caw-badge" style="background:rgba(0,229,160,.1);color:var(--green);">TLS</span>
+              <span class="caw-badge surface-blue" style="color:var(--blue);">Headers</span>
+              <span class="caw-badge surface-accent" style="color:var(--green);">TLS</span>
             </div>
           </div>
         </div>
@@ -510,7 +513,7 @@
             <div class="finding-card-endpoint">POST /api/auth/login</div>
             <div class="finding-card-tags">
               <span class="caw-badge badge-medium">Medium</span>
-              <span class="caw-badge" style="background:rgba(139,92,246,.2);color:#a78bfa;">Cookies</span>
+              <span class="caw-badge surface-violet" style="color:var(--violet);">Cookies</span>
             </div>
           </div>
         </div>

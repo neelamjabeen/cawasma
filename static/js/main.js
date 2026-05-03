@@ -5,9 +5,37 @@
 // ── Navbar scroll effect ─────────────────────────────────── //
 const mainNav = document.getElementById('mainNav');
 if (mainNav) {
-  window.addEventListener('scroll', () => {
-    mainNav.style.background = window.scrollY > 30 ? 'rgba(15,13,10,0.98)' : '';
-  }, { passive: true });
+  const syncNavState = () => {
+    mainNav.classList.toggle('is-scrolled', window.scrollY > 24);
+  };
+
+  syncNavState();
+  window.addEventListener('scroll', syncNavState, { passive: true });
+}
+
+// ── Theme toggle ─────────────────────────────────────────── //
+const root = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+
+function applyTheme(theme) {
+  root.setAttribute('data-theme', theme);
+  if (themeToggle) {
+    themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+    themeToggle.setAttribute(
+      'aria-label',
+      theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+  }
+}
+
+if (themeToggle) {
+  applyTheme(root.getAttribute('data-theme') || 'light');
+
+  themeToggle.addEventListener('click', () => {
+    const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    localStorage.setItem('cawasma-theme', nextTheme);
+  });
 }
 
 // ── Intersection Observer: fade-up animations ─────────────── //

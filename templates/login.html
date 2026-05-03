@@ -13,12 +13,29 @@
   padding: 3rem 1rem;
 }
 
-/* Animated background blobs */
-/* Clean background — no blobs */
-.login-page::before, .login-page::after { display: none; }
-@keyframes drift {
-  from { transform: translate(0, 0); }
-  to   { transform: translate(40px, 30px); }
+.login-page::before,
+.login-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.login-page::before {
+  width: 280px;
+  height: 280px;
+  top: 50px;
+  left: -70px;
+  background: var(--accent-soft);
+}
+
+.login-page::after {
+  width: 220px;
+  height: 220px;
+  right: -50px;
+  bottom: 30px;
+  background: var(--red-soft);
 }
 
 .login-wrap {
@@ -35,12 +52,13 @@
 }
 .login-brand-icon {
   width: 60px; height: 60px;
-  background: var(--green);
-  border-radius: 16px;
+  background: linear-gradient(135deg, var(--green), var(--green-dim));
+  border-radius: 20px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.8rem;
   color: #fff;
   margin: 0 auto 1rem;
+  box-shadow: var(--green-glow);
 }
 .login-brand-name {
   font-family: var(--font-display);
@@ -58,11 +76,12 @@
 
 /* Card */
 .login-card {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
-  box-shadow: 0 32px 80px rgba(0,0,0,.4);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
 }
 .login-card-title {
   font-family: var(--font-display);

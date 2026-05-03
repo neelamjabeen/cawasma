@@ -17,9 +17,10 @@
 
 /* ── Target input bar ───────────────────────────────────── */
 .target-bar {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
   padding: 2rem;
   margin-bottom: 1.5rem;
 }
@@ -49,7 +50,7 @@
   color: var(--text-muted);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   padding: 3px 10px;
   cursor: pointer;
   transition: all var(--transition);
@@ -58,9 +59,10 @@
 
 /* ── Option section ─────────────────────────────────────── */
 .option-section {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   margin-bottom: 1.5rem;
 }
@@ -110,7 +112,7 @@
   border-radius: 50%;
   transition: all var(--transition);
 }
-.caw-switch input:checked + .caw-switch-slider { background: rgba(245,158,11,.25); }
+.caw-switch input:checked + .caw-switch-slider { background: var(--accent-soft-strong); }
 .caw-switch input:checked + .caw-switch-slider::before {
   background: var(--green);
   transform: translateX(18px);
@@ -123,7 +125,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.7rem 0;
-  border-bottom: 1px solid rgba(26,46,68,.4);
+  border-bottom: 1px solid var(--line-subtle);
   gap: 12px;
 }
 .check-option:last-child { border-bottom: none; padding-bottom: 0; }
@@ -165,7 +167,7 @@
 }
 .depth-option input:checked + .depth-label {
   border-color: var(--green);
-  background: rgba(0,229,160,.1);
+  background: var(--accent-soft);
   color: var(--green);
 }
 .depth-label:hover { border-color: var(--green); }
@@ -207,7 +209,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(26,46,68,.4);
+  border-bottom: 1px solid var(--line-subtle);
   font-size: 0.83rem;
 }
 .info-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -224,7 +226,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(8,14,20,.92);
+  background: var(--bg-overlay);
   z-index: 9000;
   align-items: center;
   justify-content: center;
@@ -233,9 +235,10 @@
 }
 .scan-progress-overlay.active { display: flex; }
 .scan-progress-box {
-  background: var(--bg-card);
+  background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: 3rem 2.5rem;
   max-width: 480px;
   width: 90%;
@@ -536,7 +539,7 @@
         </div>
 
         <!-- OWASP ref -->
-        <div class="caw-card" style="background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);">
+        <div class="caw-card surface-red" style="border-color:color-mix(in srgb, var(--red) 20%, transparent);">
           <div class="d-flex align-items-center gap-3 mb-2">
             <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--red);line-height:1;">A02</div>
             <div>

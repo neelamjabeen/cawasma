@@ -10,11 +10,33 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 5rem 0;
+  padding: 5.5rem 0 4.5rem;
 }
 
-/* No hero blobs — clean background */
-.hero::before, .hero::after { display: none; }
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.hero::before {
+  width: 340px;
+  height: 340px;
+  right: -80px;
+  top: 30px;
+  background: var(--accent-soft);
+}
+
+.hero::after {
+  width: 220px;
+  height: 220px;
+  left: -60px;
+  bottom: 40px;
+  background: var(--red-soft);
+}
 
 .hero-eyebrow {
   font-family: var(--font-mono);
@@ -45,7 +67,7 @@
 .hero-title .accent { color: var(--green); }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
   max-width: 520px;
   margin-bottom: 2.5rem;
@@ -61,11 +83,14 @@
 
 /* Stats row */
 .hero-stats {
+  background: color-mix(in srgb, var(--bg-card) 84%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border);
+  padding: 1.4rem 1.5rem;
 }
 .stat-item .stat-num {
   font-family: var(--font-display);
@@ -85,14 +110,15 @@
 
 /* Hero visual - terminal card */
 .terminal-card {
-  background: var(--bg-card);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-card) 94%, var(--green) 6%) 0%, var(--bg-card) 100%);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,.5), 0 0 60px rgba(0,229,160,.06);
+  box-shadow: var(--shadow-lg);
 }
 .terminal-bar {
-  background: #0a1220;
+  background: color-mix(in srgb, var(--bg-input) 92%, transparent);
   padding: 10px 16px;
   display: flex;
   align-items: center;
@@ -105,13 +131,13 @@
 }
 .t-red   { background: #ef4444; }
 .t-yel   { background: #f59e0b; }
-.t-grn   { background: #22c55e; }
+.t-grn   { background: #00ff66; }
 .terminal-url {
   flex: 1;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 .terminal-body {
   padding: 1.5rem;
@@ -140,16 +166,18 @@
   position: relative;
 }
 .feature-card {
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 24px;
   padding: 2rem 1.5rem;
   height: 100%;
-  transition: border-color var(--transition), transform var(--transition);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 .feature-card:hover {
-  border-color: rgba(245,158,11,.25);
-  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 .feature-icon {
   width: 48px; height: 48px;
@@ -173,21 +201,22 @@
 
 /* ── OWASP CALLOUT ──────────────────────────────────────────── */
 .owasp-strip {
-  background: var(--bg-panel);
+  background: color-mix(in srgb, var(--bg-panel) 82%, transparent);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(18px);
   padding: 3rem 0;
 }
 .owasp-badge {
-  background: rgba(248,113,113,0.12);
-  border: 2px solid rgba(248,113,113,0.35);
-  color: #fca5a5;
+  background: var(--red-soft);
+  border: 2px solid color-mix(in srgb, var(--red) 30%, transparent);
+  color: var(--red);
   font-family: var(--font-display);
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   padding: 1.2rem 2rem;
-  border-radius: var(--radius-md);
+  border-radius: 24px;
   display: inline-block;
 }
 
@@ -202,9 +231,9 @@
 .step-num {
   width: 40px; height: 40px;
   flex-shrink: 0;
-  background: rgba(245,158,11,0.1);
-  border: 1.5px solid rgba(245,158,11,0.3);
-  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
   font-size: 1rem;
@@ -222,10 +251,12 @@
 /* ── CTA BANNER ─────────────────────────────────────────────── */
 .cta-banner {
   margin: 0 0 6rem;
-  background: rgba(245,158,11,0.05);
-  border: 1px solid rgba(245,158,11,0.15);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 92%, var(--green) 8%) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
   border-top: 2px solid var(--green);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: 4rem 3rem;
   text-align: center;
 }
@@ -353,7 +384,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(0,229,160,.12);color:var(--green);">
+          <div class="feature-icon surface-accent" style="color:var(--green);">
             <i class="bi bi-shield-check"></i>
           </div>
           <div class="feature-title">HTTP Header Analysis</div>
@@ -366,7 +397,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up-1">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(59,130,246,.12);color:var(--blue);">
+          <div class="feature-icon surface-blue" style="color:var(--blue);">
             <i class="bi bi-diagram-3"></i>
           </div>
           <div class="feature-title">CORS Misconfiguration</div>
@@ -379,7 +410,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up-2">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(245,158,11,.12);color:var(--yellow);">
+          <div class="feature-icon surface-yellow" style="color:var(--yellow);">
             <i class="bi bi-lock-fill"></i>
           </div>
           <div class="feature-title">TLS / SSL Configuration</div>
@@ -392,7 +423,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up-3">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(139,92,246,.12);color:#a78bfa;">
+          <div class="feature-icon surface-violet" style="color:var(--violet);">
             <i class="bi bi-cpu"></i>
           </div>
           <div class="feature-title">NLP Endpoint Classification</div>
@@ -405,7 +436,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up-4">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(249,115,22,.12);color:var(--orange);">
+          <div class="feature-icon surface-orange" style="color:var(--orange);">
             <i class="bi bi-link-45deg"></i>
           </div>
           <div class="feature-title">Attack Chain Correlation</div>
@@ -418,7 +449,7 @@
 
       <div class="col-md-6 col-lg-4 fade-up-5">
         <div class="feature-card">
-          <div class="feature-icon" style="background:rgba(239,68,68,.12);color:var(--red);">
+          <div class="feature-icon surface-red" style="color:var(--red);">
             <i class="bi bi-file-earmark-text"></i>
           </div>
           <div class="feature-title">Multi-Format Reports</div>
