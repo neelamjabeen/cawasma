@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block title %}Sign In{% endblock %}
+
+{% block extra_css %}
+<style>
+.login-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 3rem 1rem;
+}
+
+/* Animated background blobs */
+/* Clean background — no blobs */
+.login-page::before, .login-page::after { display: none; }
+@keyframes drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(40px, 30px); }
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Top logo block */
+.login-brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.login-brand-icon {
+  width: 60px; height: 60px;
+  background: var(--green);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  color: #fff;
+  margin: 0 auto 1rem;
+}
+.login-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.login-brand-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+/* Card */
+.login-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 32px 80px rgba(0,0,0,.4);
+}
+.login-card-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+.login-card-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Input group with icon */
+.input-icon-wrap {
+  position: relative;
+}
+.input-icon-wrap .field-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+}
+.input-icon-wrap .caw-input {
+  padding-left: 2.8rem;
+}
+
+/* Show/hide password toggle */
+.pw-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  transition: color var(--transition);
+}
+.pw-toggle:hover { color: var(--green); }
+
+/* Submit button full width */
+.btn-login {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  justify-content: center;
+  animation: none;
+}
+
+/* Divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Security note at bottom */
+.security-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.security-note i { color: var(--green); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <div class="login-wrap fade-up">
+
+    <!-- Brand -->
+    <div class="login-brand">
+      <div class="login-brand-icon">
+        <i class="bi bi-shield-shaded"></i>
+      </div>
+      <div class="login-brand-name">CAW<span style="color:var(--green);">ASMA</span></div>
+      <div class="login-brand-sub">Security Misconfiguration Analyzer</div>
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+      <div class="login-card-title">Welcome back</div>
+      <div class="login-card-sub">Sign in to access your scan dashboard</div>
+
+      <!-- Flash messages (if any) -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="caw-alert caw-alert-{{ 'danger' if category == 'error' else 'info' }} mb-3">
+              <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }}"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Login Form -->
+      <form action="{{ url_for('login') }}" method="POST" novalidate>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+          <label class="caw-label" for="email">Email Address</label>
+          <div class="input-icon-wrap">
+            <i class="bi bi-envelope field-icon"></i>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="caw-input"
+              placeholder="analyst@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="caw-label mb-0" for="password">Password</label>
+            <a href="#" class="text-sec" style="font-size:.8rem;">Forgot password?</a>
+          </div>
+          <div class="input-icon-wrap">
+            <i class="bi bi-lock field-icon"></i>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="caw-input"
+              placeholder="••••••••••••"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="pw-toggle" id="pwToggle" aria-label="Toggle password visibility">
+              <i class="bi bi-eye" id="pwIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <label class="d-flex align-items-center gap-2 text-sec" style="font-size:.88rem;cursor:pointer;">
+            <input type="checkbox" class="caw-check" name="remember" id="remember" />
+            Keep me signed in
+          </label>
+          <span class="caw-badge badge-low">Secure Session</span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="caw-btn caw-btn-primary btn-login">
+          <i class="bi bi-shield-check"></i> Sign In
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="or-divider">or</div>
+
+      <!-- Register link -->
+      <div class="text-center">
+        <span class="text-sec" style="font-size:.88rem;">New to CAWASMA?</span>
+        <a href="#" class="text-green ms-1" style="font-size:.88rem;font-weight:600;">
+          Request Access
+        </a>
+      </div>
+    </div>
+
+    <!-- Security note -->
+    <div class="security-note">
+      <i class="bi bi-lock-fill"></i>
+      All sessions are encrypted. For academic &amp; ethical use only.
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Password show/hide toggle
+  const toggle = document.getElementById('pwToggle');
+  const pwField = document.getElementById('password');
+  const pwIcon  = document.getElementById('pwIcon');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const isText = pwField.type === 'text';
+      pwField.type = isText ? 'password' : 'text';
+      pwIcon.className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
+    });
+  }
+</script>
+{% endblock %}

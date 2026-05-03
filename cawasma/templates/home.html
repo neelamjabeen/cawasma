@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── HERO ───────────────────────────────────────────────────── */
+.hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0;
+}
+
+/* No hero blobs — clean background */
+.hero::before, .hero::after { display: none; }
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  color: var(--green);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px; height: 1px;
+  background: var(--green);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+}
+.hero-title .accent { color: var(--green); }
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 3rem;
+}
+
+/* Stats row */
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.stat-item .stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--green);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.stat-item .stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Hero visual - terminal card */
+.terminal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5), 0 0 60px rgba(0,229,160,.06);
+}
+.terminal-bar {
+  background: #0a1220;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.t-red   { background: #ef4444; }
+.t-yel   { background: #f59e0b; }
+.t-grn   { background: #22c55e; }
+.terminal-url {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.terminal-body {
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.8;
+}
+.t-line { display: flex; gap: 8px; margin-bottom: 2px; }
+.t-prompt { color: var(--green); flex-shrink: 0; }
+.t-cmd    { color: var(--text-primary); }
+.t-out    { color: var(--text-secondary); padding-left: 20px; }
+.t-ok     { color: var(--green); }
+.t-warn   { color: var(--yellow); }
+.t-err    { color: var(--red); }
+.t-cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--green);
+  vertical-align: text-bottom;
+  animation: blink 1s step-start infinite;
+}
+
+/* ── FEATURES ───────────────────────────────────────────────── */
+.features-section {
+  padding: 6rem 0;
+  position: relative;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.5rem;
+  height: 100%;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.feature-card:hover {
+  border-color: rgba(245,158,11,.25);
+  transform: translateY(-3px);
+}
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+.feature-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+.feature-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* ── OWASP CALLOUT ──────────────────────────────────────────── */
+.owasp-strip {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 0;
+}
+.owasp-badge {
+  background: rgba(248,113,113,0.12);
+  border: 2px solid rgba(248,113,113,0.35);
+  color: #fca5a5;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  padding: 1.2rem 2rem;
+  border-radius: var(--radius-md);
+  display: inline-block;
+}
+
+/* ── HOW IT WORKS ───────────────────────────────────────────── */
+.steps-section { padding: 6rem 0; }
+.step-item {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+}
+.step-num {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  background: rgba(245,158,11,0.1);
+  border: 1.5px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--green);
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.step-desc { font-size: 0.88rem; color: var(--text-secondary); }
+
+/* ── CTA BANNER ─────────────────────────────────────────────── */
+.cta-banner {
+  margin: 0 0 6rem;
+  background: rgba(245,158,11,0.05);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-top: 2px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 4rem 3rem;
+  text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container position-relative z1">
+    <div class="row align-items-center gy-5">
+
+      <!-- Left: Text -->
+      <div class="col-lg-6">
+        <div class="hero-eyebrow fade-up">OWASP A02:2025 — Security Misconfiguration</div>
+        <h1 class="hero-title fade-up-1">
+          Detect.<br>
+          Analyze.<br>
+          <span class="accent">Secure.</span>
+        </h1>
+        <p class="hero-subtitle fade-up-2">
+          CAWASMA is a context-aware, black-box analyzer that identifies and
+          prioritizes web &amp; API security misconfigurations based on
+          observable application behavior — without touching your code.
+        </p>
+        <div class="hero-cta-row fade-up-3">
+          <a href="{{ url_for('new_scan') }}" class="caw-btn caw-btn-primary">
+            <i class="bi bi-search"></i> Launch Scan
+          </a>
+          <a href="{{ url_for('dashboard') }}" class="caw-btn-outline">
+            <i class="bi bi-grid-1x2"></i> View Dashboard
+          </a>
+        </div>
+
+        <!-- Mini stats -->
+        <div class="hero-stats fade-up-4">
+          <div class="stat-item">
+            <div class="stat-num">8+</div>
+            <div class="stat-label">Detection Modules</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">#2</div>
+            <div class="stat-label">OWASP Risk Category</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">4</div>
+            <div class="stat-label">Report Formats</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Code Access Needed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Terminal Card -->
+      <div class="col-lg-6 fade-up-3">
+        <div class="terminal-card">
+          <div class="terminal-bar">
+            <span class="terminal-dot t-red"></span>
+            <span class="terminal-dot t-yel"></span>
+            <span class="terminal-dot t-grn"></span>
+            <span class="terminal-url">cawasma — scan engine v1.0</span>
+          </div>
+          <div class="terminal-body">
+            <div class="t-line">
+              <span class="t-prompt">$</span>
+              <span class="t-cmd">cawasma --target https://example.com --mode full</span>
+            </div>
+            <div class="t-line"><span class="t-out">[*] Initializing context-aware scan engine...</span></div>
+            <div class="t-line"><span class="t-out">[*] Discovering endpoints via HTML/JS crawl...</span></div>
+            <div class="t-line"><span class="t-out t-ok">[✓] Found 34 endpoints (12 API, 22 web)</span></div>
+            <div class="t-line"><span class="t-out">[*] Analyzing HTTP response headers...</span></div>
+            <div class="t-line"><span class="t-out t-warn">[!] Missing X-Frame-Options on /admin/login</span></div>
+            <div class="t-line"><span class="t-out t-warn">[!] CSP not configured — HIGH risk (admin endpoint)</span></div>
+            <div class="t-line"><span class="t-out">[*] Running CORS misconfiguration checks...</span></div>
+            <div class="t-line"><span class="t-out t-err">[✗] CORS wildcard origin on /api/v2/users — CRITICAL</span></div>
+            <div class="t-line"><span class="t-out">[*] TLS configuration analysis...</span></div>
+            <div class="t-line"><span class="t-out t-ok">[✓] TLS 1.3 detected — PASS</span></div>
+            <div class="t-line"><span class="t-out">[*] NLP endpoint classification...</span></div>
+            <div class="t-line"><span class="t-out t-ok">[✓] Context scores applied to 34 endpoints</span></div>
+            <div class="t-line"><span class="t-out">[*] Generating report (PDF + JSON)...</span></div>
+            <div class="t-line"><span class="t-ok">[✓] Scan complete — 3 CRITICAL, 5 HIGH, 9 MEDIUM</span></div>
+            <div class="t-line">
+              <span class="t-prompt">$</span>
+              <span class="t-cursor"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ OWASP CALLOUT ════════════════════════════════════════ -->
+<section class="owasp-strip">
+  <div class="container">
+    <div class="row align-items-center gy-4">
+      <div class="col-md-3 text-center">
+        <div class="owasp-badge">A02</div>
+        <div class="text-muted-caw small mt-2 mono">OWASP Top 10 — 2025</div>
+      </div>
+      <div class="col-md-9">
+        <h3 class="section-title" style="font-size:1.6rem;">Security Misconfiguration is the <span class="text-red">#2 most critical</span> web risk</h3>
+        <p class="text-sec mb-0">
+          Existing black-box scanners detect misconfigurations but lack meaningful prioritization.
+          CAWASMA bridges this gap with <strong class="text-green">context-aware CVSS scoring</strong>
+          — considering endpoint sensitivity, response data, and attack chain correlation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ═════════════════════════════════════════════ -->
+<section class="features-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-eyebrow">Core Capabilities</div>
+      <h2 class="section-title">What CAWASMA Detects</h2>
+    </div>
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-4 fade-up">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(0,229,160,.12);color:var(--green);">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <div class="feature-title">HTTP Header Analysis</div>
+          <p class="feature-desc">
+            Checks Content-Security-Policy, HSTS, X-Frame-Options, Referrer-Policy,
+            and more against best-practice configurations.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 fade-up-1">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(59,130,246,.12);color:var(--blue);">
+            <i class="bi bi-diagram-3"></i>
+          </div>
+          <div class="feature-title">CORS Misconfiguration</div>
+          <p class="feature-desc">
+            Identifies wildcard origins, insecure preflight handling, and
+            overly permissive cross-origin resource sharing policies.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 fade-up-2">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(245,158,11,.12);color:var(--yellow);">
+            <i class="bi bi-lock-fill"></i>
+          </div>
+          <div class="feature-title">TLS / SSL Configuration</div>
+          <p class="feature-desc">
+            Validates cipher suites, protocol versions, certificate validity,
+            and HSTS deployment across all discovered endpoints.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 fade-up-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(139,92,246,.12);color:#a78bfa;">
+            <i class="bi bi-cpu"></i>
+          </div>
+          <div class="feature-title">NLP Endpoint Classification</div>
+          <p class="feature-desc">
+            Uses natural language processing to identify endpoint types (admin,
+            login, payment) and adjusts risk scoring based on sensitivity.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 fade-up-4">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(249,115,22,.12);color:var(--orange);">
+            <i class="bi bi-link-45deg"></i>
+          </div>
+          <div class="feature-title">Attack Chain Correlation</div>
+          <p class="feature-desc">
+            Maps multi-step exploit paths by correlating individual findings
+            into broader attack chains with aggregated risk scores.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 fade-up-5">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(239,68,68,.12);color:var(--red);">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div class="feature-title">Multi-Format Reports</div>
+          <p class="feature-desc">
+            Generates detailed findings reports in PDF, JSON, HTML, and CSV —
+            ready for developers, auditors, and stakeholders.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ═════════════════════════════════════════ -->
+<section class="steps-section">
+  <div class="container">
+    <div class="row gy-5">
+      <div class="col-lg-5">
+        <div class="section-eyebrow">Workflow</div>
+        <h2 class="section-title mb-3">How It Works</h2>
+        <p class="section-subtitle">
+          A fully passive, black-box analysis pipeline — no source code access,
+          no intrusive probing, safe for production targets.
+        </p>
+      </div>
+      <div class="col-lg-7">
+        <div class="step-item fade-up">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Enter Target URL</div>
+            <div class="step-desc">Provide the target domain or API base URL. CAWASMA operates entirely over HTTPS with no internal access required.</div>
+          </div>
+        </div>
+        <div class="step-item fade-up-1">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Automated Endpoint Discovery</div>
+            <div class="step-desc">Crawls HTML, parses JavaScript, and probes common paths to build a comprehensive endpoint map.</div>
+          </div>
+        </div>
+        <div class="step-item fade-up-2">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Context-Aware Analysis</div>
+            <div class="step-desc">Each endpoint is classified by type and sensitivity. Detection modules run against headers, cookies, methods, and response data.</div>
+          </div>
+        </div>
+        <div class="step-item fade-up-3">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">CVSS Scoring &amp; Prioritization</div>
+            <div class="step-desc">Findings are scored with context-adjusted CVSS metrics — prioritized by actual risk, not just presence of a misconfiguration.</div>
+          </div>
+        </div>
+        <div class="step-item fade-up-4">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Report Generation</div>
+            <div class="step-desc">Download structured reports in your preferred format (PDF, JSON, HTML, CSV) with remediation guidance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BANNER ═══════════════════════════════════════════ -->
+<div class="container">
+  <div class="cta-banner fade-up">
+    <div class="section-eyebrow justify-content-center d-flex">Ready to Analyze</div>
+    <h2 class="section-title mb-3">Run Your First Scan Now</h2>
+    <p class="section-subtitle mx-auto mb-4 text-center">
+      Identify security misconfigurations before attackers do.
+      CAWASMA is safe, passive, and requires zero internal access.
+    </p>
+    <a href="{{ url_for('new_scan') }}" class="caw-btn caw-btn-primary" style="font-size:1rem;padding:.7rem 2.2rem;">
+      <i class="bi bi-search"></i> Start Free Scan
+    </a>
+  </div>
+</div>
+
+{% endblock %}

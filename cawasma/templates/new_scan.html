@@ -1,0 +1,658 @@
+{% extends "base.html" %}
+{% block title %}New Scan{% endblock %}
+
+{% block extra_css %}
+<style>
+.scan-page { padding: 3rem 0 5rem; }
+
+.scan-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 992px) {
+  .scan-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Target input bar ───────────────────────────────────── */
+.target-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+.target-input-wrap {
+  display: flex;
+  gap: 10px;
+}
+.target-input-wrap .caw-input {
+  font-size: 1rem;
+  padding: 0.75rem 1.2rem;
+}
+.btn-scan-launch {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.target-hints {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.target-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.target-hint:hover { color: var(--green); border-color: var(--green); }
+
+/* ── Option section ─────────────────────────────────────── */
+.option-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.option-section-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+.option-section-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.option-section-body { padding: 1.5rem; }
+
+/* Toggle switch */
+.caw-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.caw-switch input { display: none; }
+.caw-switch-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 22px;
+  transition: background var(--transition);
+  cursor: pointer;
+}
+.caw-switch-slider::before {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 16px; height: 16px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: all var(--transition);
+}
+.caw-switch input:checked + .caw-switch-slider { background: rgba(245,158,11,.25); }
+.caw-switch input:checked + .caw-switch-slider::before {
+  background: var(--green);
+  transform: translateX(18px);
+  box-shadow: var(--green-glow);
+}
+
+/* Check-option rows */
+.check-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(26,46,68,.4);
+  gap: 12px;
+}
+.check-option:last-child { border-bottom: none; padding-bottom: 0; }
+.check-option:first-child { padding-top: 0; }
+.check-option-info { flex: 1; }
+.check-option-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.check-option-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Scan depth radio */
+.depth-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.depth-option {
+  position: relative;
+}
+.depth-option input[type="radio"] { display: none; }
+.depth-label {
+  display: block;
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.depth-option input:checked + .depth-label {
+  border-color: var(--green);
+  background: rgba(0,229,160,.1);
+  color: var(--green);
+}
+.depth-label:hover { border-color: var(--green); }
+.depth-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Output format checkboxes */
+.format-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.format-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.85rem;
+}
+.format-option:hover { border-color: var(--green); }
+.format-option input { accent-color: var(--green); }
+.format-icon { font-size: 1.1rem; }
+
+/* ── Sidebar: scan info ─────────────────────────────────── */
+.scan-sidebar .caw-card { margin-bottom: 1.2rem; }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(26,46,68,.4);
+  font-size: 0.83rem;
+}
+.info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.info-key {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+.info-val { font-weight: 600; text-align: right; }
+
+/* ── Progress overlay (for scan in progress) ────────────── */
+.scan-progress-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8,14,20,.92);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.scan-progress-overlay.active { display: flex; }
+.scan-progress-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem;
+  max-width: 480px;
+  width: 90%;
+}
+.scan-spinner {
+  width: 64px; height: 64px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.scan-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--green);
+  margin-top: 1rem;
+  min-height: 1.2em;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scan-page">
+  <div class="container">
+
+    <!-- Page Header -->
+    <div class="mb-4 fade-up">
+      <div class="section-eyebrow">Analysis</div>
+      <h1 class="page-title" style="font-family:var(--font-display);font-size:1.9rem;font-weight:700;">
+        Launch New Scan
+      </h1>
+      <p class="text-sec" style="font-size:.9rem;margin-top:4px;">
+        Configure and run a context-aware security misconfiguration scan against any web target or API.
+      </p>
+    </div>
+
+    <!-- Alert: ethical use -->
+    <div class="caw-alert caw-alert-info mb-4 fade-up-1">
+      <i class="bi bi-info-circle-fill" style="flex-shrink:0;margin-top:2px;"></i>
+      <div>
+        <strong>Ethical Use Only.</strong>
+        Only scan targets you own or have explicit written permission to test.
+        CAWASMA is a passive analyzer — it does not exploit vulnerabilities.
+      </div>
+    </div>
+
+    <!-- ── Main Layout ─────────────────────────────────────── -->
+    <div class="scan-layout fade-up-2">
+
+      <!-- Left: Configuration -->
+      <div>
+
+        <!-- Target URL -->
+        <div class="target-bar">
+          <label class="caw-label" for="targetUrl">Target URL / API Endpoint</label>
+          <div class="target-input-wrap">
+            <input
+              type="url"
+              id="targetUrl"
+              class="caw-input"
+              placeholder="https://example.com or https://api.example.com/v1"
+              autocomplete="off"
+            />
+            <button class="caw-btn caw-btn-primary btn-scan-launch" id="launchBtn" onclick="startScan()">
+              <i class="bi bi-search"></i> Scan
+            </button>
+          </div>
+          <div class="target-hints">
+            <span class="text-muted-caw mono" style="font-size:.72rem;">Try:</span>
+            <span class="target-hint" onclick="fillTarget('https://example.com')">https://example.com</span>
+            <span class="target-hint" onclick="fillTarget('https://httpbin.org')">https://httpbin.org</span>
+            <span class="target-hint" onclick="fillTarget('https://jsonplaceholder.typicode.com')">https://jsonplaceholder.typicode.com</span>
+          </div>
+        </div>
+
+        <!-- Scan Depth -->
+        <div class="option-section">
+          <div class="option-section-header">
+            <div class="option-section-title">
+              <i class="bi bi-layers text-green"></i> Scan Depth
+            </div>
+          </div>
+          <div class="option-section-body">
+            <div class="depth-options">
+              <div class="depth-option">
+                <input type="radio" name="depth" id="d-quick" value="quick" />
+                <label class="depth-label" for="d-quick">
+                  Quick
+                  <span class="depth-sub">~2 min</span>
+                </label>
+              </div>
+              <div class="depth-option">
+                <input type="radio" name="depth" id="d-standard" value="standard" checked />
+                <label class="depth-label" for="d-standard">
+                  Standard
+                  <span class="depth-sub">~8 min</span>
+                </label>
+              </div>
+              <div class="depth-option">
+                <input type="radio" name="depth" id="d-full" value="full" />
+                <label class="depth-label" for="d-full">
+                  Full
+                  <span class="depth-sub">~20 min</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detection Modules -->
+        <div class="option-section">
+          <div class="option-section-header">
+            <div class="option-section-title">
+              <i class="bi bi-toggles text-green"></i> Detection Modules
+            </div>
+            <span class="text-muted-caw mono" style="font-size:.72rem;">6 / 8 enabled</span>
+          </div>
+          <div class="option-section-body">
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">HTTP Security Headers</div>
+                <div class="check-option-desc">CSP, HSTS, X-Frame-Options, Referrer-Policy</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">CORS Configuration</div>
+                <div class="check-option-desc">Wildcard origins, preflight misconfigurations</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">TLS / SSL Analysis</div>
+                <div class="check-option-desc">Cipher suites, protocol versions, certificates</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">Cookie Security</div>
+                <div class="check-option-desc">Secure, HttpOnly, SameSite flags</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">NLP Endpoint Classification</div>
+                <div class="check-option-desc">Admin/login/payment endpoint sensitivity scoring</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">Response Data Analysis</div>
+                <div class="check-option-desc">PII, tokens, and financial data in responses</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" checked />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">Attack Chain Correlation</div>
+                <div class="check-option-desc">Multi-step exploit path mapping</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="check-option">
+              <div class="check-option-info">
+                <div class="check-option-label">Exposed File Detection</div>
+                <div class="check-option-desc">.env, .git, backup files, config leaks</div>
+              </div>
+              <label class="caw-switch">
+                <input type="checkbox" />
+                <span class="caw-switch-slider"></span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Output Formats -->
+        <div class="option-section">
+          <div class="option-section-header">
+            <div class="option-section-title">
+              <i class="bi bi-file-earmark-text text-green"></i> Report Output Formats
+            </div>
+          </div>
+          <div class="option-section-body">
+            <div class="format-grid">
+              <label class="format-option">
+                <input type="checkbox" checked class="caw-check" />
+                <span class="format-icon text-red">📄</span>
+                <span>PDF Report</span>
+              </label>
+              <label class="format-option">
+                <input type="checkbox" checked class="caw-check" />
+                <span class="format-icon text-yellow">{ }</span>
+                <span>JSON Data</span>
+              </label>
+              <label class="format-option">
+                <input type="checkbox" class="caw-check" />
+                <span class="format-icon text-blue">🌐</span>
+                <span>HTML Report</span>
+              </label>
+              <label class="format-option">
+                <input type="checkbox" class="caw-check" />
+                <span class="format-icon text-green">📊</span>
+                <span>CSV Export</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- end left col -->
+
+      <!-- Right: Sidebar -->
+      <div class="scan-sidebar">
+
+        <!-- Scan summary info -->
+        <div class="caw-card caw-card-glow">
+          <div class="dash-section-title" style="font-family:var(--font-display);font-size:0.95rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+            <i class="bi bi-info-circle text-green"></i> Scan Summary
+          </div>
+          <div class="info-row">
+            <span class="info-key">Mode</span>
+            <span class="info-val text-green mono">Black-Box</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Depth</span>
+            <span class="info-val" id="depthDisplay">Standard</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Modules</span>
+            <span class="info-val">6 / 8</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Est. Time</span>
+            <span class="info-val">~8 minutes</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Code Access</span>
+            <span class="info-val text-green">Not required</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Exploitation</span>
+            <span class="info-val text-green">None (passive)</span>
+          </div>
+        </div>
+
+        <!-- What we check -->
+        <div class="caw-card">
+          <div class="mono text-muted-caw" style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;">
+            Analyzed Vectors
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="caw-badge badge-info">Headers</span>
+            <span class="caw-badge badge-info">CORS</span>
+            <span class="caw-badge badge-info">TLS</span>
+            <span class="caw-badge badge-info">Cookies</span>
+            <span class="caw-badge badge-info">Methods</span>
+            <span class="caw-badge badge-info">Endpoints</span>
+            <span class="caw-badge badge-info">Responses</span>
+            <span class="caw-badge badge-info">Context</span>
+          </div>
+        </div>
+
+        <!-- OWASP ref -->
+        <div class="caw-card" style="background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--red);line-height:1;">A02</div>
+            <div>
+              <div style="font-size:.8rem;font-weight:600;">OWASP Top 10 — 2025</div>
+              <div class="mono" style="font-size:.72rem;color:var(--text-muted);">Security Misconfiguration</div>
+            </div>
+          </div>
+          <p class="text-muted-caw" style="font-size:.78rem;margin:0;">
+            CAWASMA targets OWASP A02 — the #2 most critical web application security risk.
+          </p>
+        </div>
+
+        <!-- Launch CTA -->
+        <button class="caw-btn caw-btn-primary w-100 justify-content-center" style="padding:.8rem;font-size:1rem;" onclick="startScan()">
+          <i class="bi bi-search"></i> Launch Scan
+        </button>
+
+      </div>
+      <!-- end sidebar -->
+
+    </div>
+    <!-- end scan layout -->
+
+  </div>
+</div>
+
+<!-- ── Scan Progress Overlay ───────────────────────────────── -->
+<div class="scan-progress-overlay" id="scanOverlay">
+  <div class="scan-progress-box">
+    <div class="scan-spinner"></div>
+    <h3 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:.5rem;">Scanning Target</h3>
+    <div class="mono text-green" style="font-size:.85rem;margin-bottom:1.5rem;" id="overlayTarget">https://example.com</div>
+    <div class="caw-progress mb-3">
+      <div class="caw-progress-bar" id="overlayProgressBar" style="width:0%;background:var(--green);transition:width .5s ease;"></div>
+    </div>
+    <div class="text-muted-caw" style="font-size:.8rem;margin-bottom:.5rem;" id="overlayPercent">0%</div>
+    <div class="scan-progress-label" id="overlayLabel">Initializing scan engine...</div>
+    <button class="caw-btn caw-btn-ghost mt-3" onclick="cancelScan()">
+      <i class="bi bi-x-circle"></i> Cancel
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Fill target input from hint chips
+  function fillTarget(url) {
+    document.getElementById('targetUrl').value = url;
+  }
+
+  // Update depth display label
+  document.querySelectorAll('input[name="depth"]').forEach(radio => {
+    radio.addEventListener('change', e => {
+      const labels = { quick: 'Quick (~2 min)', standard: 'Standard (~8 min)', full: 'Full (~20 min)' };
+      document.getElementById('depthDisplay').textContent = labels[e.target.value] || 'Standard';
+    });
+  });
+
+  // Simulate scan progress (UI demo only)
+  const scanSteps = [
+    'Initializing scan engine...',
+    'Resolving DNS and detecting server...',
+    'Crawling HTML endpoints...',
+    'Parsing JavaScript for API routes...',
+    'Analyzing HTTP security headers...',
+    'Checking CORS configurations...',
+    'Validating TLS/SSL settings...',
+    'Inspecting cookie attributes...',
+    'Running NLP endpoint classifier...',
+    'Analyzing response bodies for PII...',
+    'Calculating context-aware CVSS scores...',
+    'Correlating attack chains...',
+    'Generating report...',
+    'Scan complete!'
+  ];
+
+  let scanInterval = null;
+
+  function startScan() {
+    const target = document.getElementById('targetUrl').value.trim();
+    if (!target) {
+      document.getElementById('targetUrl').focus();
+      document.getElementById('targetUrl').style.borderColor = 'var(--red)';
+      setTimeout(() => document.getElementById('targetUrl').style.borderColor = '', 2000);
+      return;
+    }
+
+    document.getElementById('overlayTarget').textContent = target;
+    document.getElementById('scanOverlay').classList.add('active');
+
+    let step = 0;
+    let pct  = 0;
+
+    scanInterval = setInterval(() => {
+      if (step < scanSteps.length) {
+        document.getElementById('overlayLabel').textContent = scanSteps[step];
+        pct = Math.round((step / (scanSteps.length - 1)) * 100);
+        document.getElementById('overlayProgressBar').style.width = pct + '%';
+        document.getElementById('overlayPercent').textContent = pct + '%';
+        step++;
+      } else {
+        clearInterval(scanInterval);
+        // Redirect to findings page after demo
+        setTimeout(() => {
+          window.location.href = "{{ url_for('findings') }}";
+        }, 800);
+      }
+    }, 900);
+  }
+
+  function cancelScan() {
+    clearInterval(scanInterval);
+    document.getElementById('scanOverlay').classList.remove('active');
+    document.getElementById('overlayProgressBar').style.width = '0%';
+    document.getElementById('overlayPercent').textContent = '0%';
+  }
+</script>
+{% endblock %}
